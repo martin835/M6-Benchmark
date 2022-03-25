@@ -12,9 +12,15 @@ const productSchema = new Schema({
   reviews: [
     {
       comment: { type: String, required: true },
-      price: { type: Number, min: 1, max: 5, required: true },
+      rate: { type: Number, min: 1, max: 5, required: true },
     },
   ],
+});
+
+productSchema.static("filterData", async function (mongoQuery) {
+  const data = await this.find(mongoQuery.criteria);
+
+  return data;
 });
 
 export default model("Product", productSchema);

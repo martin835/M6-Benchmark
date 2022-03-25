@@ -5,7 +5,7 @@ import cors from "cors";
 import productsRouter from "./products/index.js";
 import usersRouter from "./users/index.js";
 import shopCartRouter from "./shoppingCart/index.js";
-
+import productReviewsRouter from "./products/reviews/index.js";
 
 
 const server = express();
@@ -18,8 +18,8 @@ server.use(express.json());
 
 //***********************************Endpoints*********************************************************/
 
-server.use("/products", productsRouter);
-server.use("/users", usersRouter)
+server.use("/products", [productsRouter, productReviewsRouter]);
+server.use("/users", usersRouter);
 server.use("/shopCart", shopCartRouter);
 //***********************************Error handlers****************************************************/
 

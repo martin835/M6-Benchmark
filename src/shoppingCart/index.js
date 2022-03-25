@@ -55,6 +55,25 @@ shopCartRouter.post("/:userId", async (req, res, next) => {
   })
 
 
+shopCartRouter.delete("/:cartId/delete/:productId", async (req, res, next) => {
+    try {
+      const modifiedShopCart = await shopCartModel.findByIdAndUpdate(
+        req.params.cartId, // WHO
+        { $pull: { products: { productId: req.params.productId } } }, // HOW
+        { new: true }
+      ).populate({ path: "ownerId", select: "firstName lastName" })
+      .populate({path: "products", populate: { path: "productId", select: "name price"} })
+  
+      if (modifiedShopCart) {
+        res.send(modifiedShopCart)
+      } else {
+        next(createError(404, `User with id ${req.params.cartId} not found!`))
+      }
+    } catch (error) {
+      next(error)
+    }
+  })
+
 
 
   export default shopCartRouter

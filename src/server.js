@@ -4,6 +4,7 @@ import listEndpoints from "express-list-endpoints";
 import cors from "cors";
 import productsRouter from "./products/index.js";
 import usersRouter from "./users/index.js";
+import shopCartRouter from "./shoppingCart/index.js";
 
 
 const server = express();
@@ -18,7 +19,7 @@ server.use(express.json());
 
 server.use("/products", productsRouter);
 server.use("/users", usersRouter)
-
+server.use("/shopCart", shopCartRouter);
 //***********************************Error handlers****************************************************/
 
 mongoose.connect(process.env.MONGO_CONNECTION);

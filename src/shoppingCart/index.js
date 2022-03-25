@@ -33,7 +33,8 @@ shopCartRouter.post("/:userId", async (req, res, next) => {
           {
             new: true,
           }
-        )
+        ).populate({ path: "ownerId", select: "firstName lastName" })
+        .populate({path: "products", populate: { path: "productId", select: "name price"} })
         res.send(modifiedCart)
       } else {
   
@@ -44,7 +45,8 @@ shopCartRouter.post("/:userId", async (req, res, next) => {
             new: true, 
             upsert: true,
           }
-        )
+        ).populate({ path: "ownerId", select: "firstName lastName" })
+        .populate({path: "products", populate: { path: "productId", select: "name price"} })
         res.send(modifiedCart)
       }
     } catch (error) {

@@ -2,8 +2,19 @@ import express from "express";
 import createError from "http-errors";
 import q2m from "query-to-mongo";
 import ProductModel from "./model.js";
+import { CloudinaryStorage } from "multer-storage-cloudinary"
+import { v2 as cloudinary } from "cloudinary"
+import multer from "multer";
 
 const productsRouter = express.Router();
+
+const cloudStorageProd = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "M6-Benchmark",
+  },
+})
+const cloudMulterProd = multer({ storage: cloudStorageProd })
 
 //1 POST a Product
 productsRouter.post("/", async (req, res, next) => {
@@ -89,5 +100,24 @@ productsRouter.delete("/:productId", async (req, res, next) => {
     next(error);
   }
 });
+
+productsRouter.post("/:productId/upload", cloudMulterProd.single("imageUrl"), async (req, res, next) => {
+  try {
+
+      const updatedProduct = await ProductModel.findByIdAndUpdate(
+        req.params.productId,
+       { imageUrl: req.file.path}, 
+        { new: true, runValidators: true } )
+  
+      if (updatedProduct) {
+        res.send(updatedProduct)
+      } else {
+        next(createError(404, `Product with id ${req.params.productId} not found!`))
+      }
+    } catch (error) {
+      next(error)
+    }
+
+})
 
 export default productsRouter;

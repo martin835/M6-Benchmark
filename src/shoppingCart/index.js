@@ -1,6 +1,8 @@
 import express from "express"
 import createError from "http-errors"
 import shopCartModel from "./model.js"
+import UsersModel from "../users/model.js"
+import ProductModel from "../products/model.js";
 
 const shopCartRouter = express.Router()
 
@@ -9,10 +11,10 @@ shopCartRouter.post("/:userId", async (req, res, next) => {
 
       const { productId, quantity } = req.body
   
-      const user = await usersModel.findById(req.params.userId)
+      const user = await UsersModel.findById(req.params.userId)
       if (!user) return next(createError(404, `User with id ${req.params.userId} not found`))
   
-      const purchasedProduct = await productsModel.findById(productId)
+      const purchasedProduct = await ProductModel.findById(productId)
       if (!purchasedProduct) return next(createError(404, `Product with id ${productId} not found`))
 
       const isProduct = await shopCartModel.findOne({ status: "active", ownerId: req.params.userId, "products.productId": purchasedProduct._id })

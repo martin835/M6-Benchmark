@@ -17,4 +17,10 @@ const productSchema = new Schema({
   ],
 });
 
+productSchema.static("filterData", async function (mongoQuery) {
+  const data = await this.find(mongoQuery.criteria);
+
+  return data;
+});
+
 export default model("Product", productSchema);

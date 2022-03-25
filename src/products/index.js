@@ -31,7 +31,7 @@ productsRouter.get("/", async (req, res, next) => {
     console.log("QUERY-TO-MONGO: ", q2m(req.query));
     const mongoQuery = q2m(req.query);
 
-    const data = await ProductModel.find();
+    const data = await ProductModel.filterData(mongoQuery);
 
     res.send(data);
   } catch (error) {

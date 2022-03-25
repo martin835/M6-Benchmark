@@ -61,10 +61,21 @@ productsRouter.get("/:productId", async (req, res, next) => {
 });
 
 //4 Edit one Product
-productsRouter.put("/:id", async (req, res, next) => {
+productsRouter.put("/:productId", async (req, res, next) => {
   console.log("➡️ PING - EDIT A PRODUCT REQUEST");
 
   try {
+    const updatedProduct = await ProductModel.findByIdAndUpdate(
+      req.params.productId,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedProduct)
+      next(
+        createError(404, `Product with id ${req.params.productId} not found!`)
+      );
+    res.send(updatedProduct);
   } catch (error) {
     next(error);
   }

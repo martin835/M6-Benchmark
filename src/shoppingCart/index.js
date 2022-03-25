@@ -88,8 +88,8 @@ shopCartRouter.post("/:userId", async (req, res, next) => {
 shopCartRouter.delete("/:cartId/delete/:productId", async (req, res, next) => {
     try {
       const modifiedShopCart = await shopCartModel.findByIdAndUpdate(
-        req.params.cartId, // WHO
-        { $pull: { products: { productId: req.params.productId } } }, // HOW
+        req.params.cartId, 
+        { $pull: { products: { productId: req.params.productId } } },
         { new: true }
       ).populate({ path: "ownerId", select: "firstName lastName" })
       .populate({path: "products", populate: { path: "productId", select: "name price"} })

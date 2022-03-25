@@ -29,10 +29,17 @@ productsRouter.get("/", async (req, res, next) => {
     console.log("REQ QUERY: ", req.query);
     console.log("QUERY-TO-MONGO: ", q2m(req.query));
     const mongoQuery = q2m(req.query);
-
-    const data = await ProductModel.find();
-
-    res.send(data);
+    const total = await ProductModel.countDocuments(mongoQuery.criteria)
+    const posts = await ProductModel.find(mongoQuery.criteria, mongoQuery.options.fields)
+    .limit(mongoQuery.options.limit || 20)
+    .skip(mongoQuery.options.skip || 0)
+    .sort(mongoQuery.options.sort)
+  res.send({
+    links: mongoQuery.links(`${process.env.API_URL}/posts`, total),
+    total,
+    totalPages: Math.ceil(total / mongoQuery.options.limit),
+    posts
+  })
   } catch (error) {
     console.log(error);
     next(error);

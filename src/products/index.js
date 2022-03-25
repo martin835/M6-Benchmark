@@ -29,10 +29,17 @@ productsRouter.get("/", async (req, res, next) => {
     console.log("REQ QUERY: ", req.query);
     console.log("QUERY-TO-MONGO: ", q2m(req.query));
     const mongoQuery = q2m(req.query);
-
-    const data = await ProductModel.find();
-
-    res.send(data);
+    const total = await ProductModel.countDocuments(mongoQuery.criteria)
+    const posts = await ProductModel.find(mongoQuery.criteria, mongoQuery.options.fields)
+    .limit(mongoQuery.options.limit || 20)
+    .skip(mongoQuery.options.skip || 0)
+    .sort(mongoQuery.options.sort)
+  res.send({
+    links: mongoQuery.links(`${process.env.API_URL}/posts`, total),
+    total,
+    totalPages: Math.ceil(total / mongoQuery.options.limit),
+    posts
+  })
   } catch (error) {
     console.log(error);
     next(error);
@@ -79,6 +86,28 @@ productsRouter.delete("/:productId", async (req, res, next) => {
     );
     if (deleteProduct) {
       res.status(204).send();
+    } else {
+      next(
+        createError(404, `Product with id ${req.params.productId} not found :(`)
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+//Add an extra method to get all the reviews of a specific product
+productsRouter.get("/:productId/reviews", async (req, res, next) => {
+  try {
+    console.log("➡️ PING - GET ONE REQUEST");
+
+    const product = await ProductModel.findById(req.params.productId);
+    const productReviews = await ProductModel.find({_id: req.params.productId}, { reviews: 1, _id: 0})
+    //const productReviews = await ProductModel.findById(req.params.productId).select('reviews') ALTERNATIVE
+    
+    if (product) {
+      res.send(productReviews);
     } else {
       next(
         createError(404, `Product with id ${req.params.productId} not found :(`)

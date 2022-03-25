@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import listEndpoints from "express-list-endpoints";
 import cors from "cors";
 import productsRouter from "./products/index.js";
+import usersRouter from "./users/index.js";
+
 
 const server = express();
 const port = process.env.port || 5001;
@@ -13,7 +15,10 @@ server.use(cors());
 server.use(express.json());
 
 //***********************************Endpoints*********************************************************/
+
 server.use("/products", productsRouter);
+server.use("/users", usersRouter)
+
 //***********************************Error handlers****************************************************/
 
 mongoose.connect(process.env.MONGO_CONNECTION);

@@ -4,8 +4,8 @@ const { Schema, model } = mongoose
 
 const shopCartSchema = new Schema(
   {
-    ownerId: { type: mongoose.Types.ObjectId, ref: "user", required: true },
-    products: [{ productId: { type: mongoose.Types.ObjectId, ref: "product" }, quantity: Number, _id: false }],
+    ownerId: { type: mongoose.Types.ObjectId, ref: "User", required: true },
+    products: [{ productId: { type: mongoose.Types.ObjectId, ref: "Product" }, quantity: Number, _id: false }],
     status: { type: String, required: true, enum: ["active", "paid"] },
   },
   { timestamps: true }

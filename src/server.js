@@ -8,7 +8,7 @@ import shopCartRouter from "./shoppingCart/index.js";
 import productReviewsRouter from "./products/reviews/index.js";
 
 const server = express();
-const port = process.env.port;
+const port = process.env.PORT;
 
 //***********************************Middlewares*******************************************************/
 

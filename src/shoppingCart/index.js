@@ -54,6 +54,36 @@ shopCartRouter.post("/:userId", async (req, res, next) => {
     }
   })
 
+  shopCartRouter.get("/", async (req, res, next) => {
+    try {
+      const carts = await shopCartModel.find().populate({ path: "ownerId", select: "firstName lastName" })
+      .populate({path: "products", populate: { path: "productId", select: "name price"} })
+      res.send(carts)
+    } catch (error) {
+      next(error)
+    }
+  })
+
+ shopCartRouter.put("/:cartId", async (req, res, next) => {
+    try {
+      const updatedCart = await shopCartModel.findByIdAndUpdate(
+        req.params.cartId, 
+        req.body, 
+        { new: true, runValidators: true } 
+      ).populate({ path: "ownerId", select: "firstName lastName" })
+      .populate({path: "products", populate: { path: "productId", select: "name price"} })
+
+  
+      if (updatedCart) {
+        res.send(updatedCart)
+      } else {
+        next(createError(404, `Cart with id ${req.params.cartId} not found!`))
+      }
+    } catch (error) {
+      next(error)
+    }
+  })
+
 
 shopCartRouter.delete("/:cartId/delete/:productId", async (req, res, next) => {
     try {
